@@ -56,11 +56,13 @@ func (a *Application) handleSyncCommand() cli.ActionFunc {
 			fmt.Println("WARNING: signature verification is disabled!")
 		}
 
+		connected := false
 		for _, u := range service.URLs {
 			mirrors, err := client.GetMirrorsMessage(u)
 			if err != nil {
 				continue
 			}
+			connected = true
 
 			if !c.Bool("no-verify-signature") {
 				if _, err := mirrors.VerifySignature(service.PublicKeys); err != nil {
@@ -104,6 +106,10 @@ func (a *Application) handleSyncCommand() cli.ActionFunc {
 			}
 
 			break
+		}
+
+		if !connected {
+			return fmt.Errorf("failed to sync mirrors: all known mirrors are unreachable")
 		}
 
 		return nil
