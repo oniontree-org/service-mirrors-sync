@@ -31,6 +31,9 @@ func (a *Application) handleOnionTreeOpen() cli.BeforeFunc {
 
 func (a *Application) handleSyncCommand() cli.ActionFunc {
 	normalizeURL := func(u string) (string, error) {
+		if !strings.HasPrefix(u, "http://") || !strings.HasPrefix(u, "https://") {
+			u = fmt.Sprintf("http://%s", u)
+		}
 		nu, err := url.ParseRequestURI(u)
 		if err != nil {
 			return "", err
