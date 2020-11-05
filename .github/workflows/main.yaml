@@ -222,45 +222,6 @@ jobs:
           test -z "$(git status --porcelain)"
         working-directory: ./oniontree
 
-  deepseamarket:
-    name: "DeepSea Market"
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - uses: actions/download-artifact@v2
-        with:
-          name: service-mirrors
-          path: ./main
-
-      - name: Update permissions
-        run: |
-          chmod +x service-mirrors
-        working-directory: ./main
-
-      - name: Update PATH
-        run: |
-          echo ::set-env name=PATH::$PATH:$GITHUB_WORKSPACE/main
-
-      - uses: actions/checkout@v2
-        with:
-          repository: onionltd/oniontree
-          path: oniontree
-
-      - uses: onionltd/tor-proxy@v1
-
-      - name: Sync
-        run: |
-          service-mirrors sync --timeout 1m deepseamarket
-        env:
-          http_proxy: "socks5://localhost:9050"
-          https_proxy: "socks5://localhost:9050"
-        working-directory: ./oniontree
-
-      - name: Check status
-        run: |
-          test -z "$(git status --porcelain)"
-        working-directory: ./oniontree
-
   darkfoxmarket:
     name: "DarkFox Market"
     runs-on: ubuntu-latest
